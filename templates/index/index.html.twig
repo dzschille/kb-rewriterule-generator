@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}RewriteRule Generator{% endblock %}
+
+{% block stylesheets %}
+
+    <style>
+        h1 {
+            text-align: center;
+        }
+        .btn {
+            display: block;
+            text-align: center;
+            padding: 1rem;
+            color: #fff;
+            margin: 1rem 0;
+            font-size: 20px;
+            outline: none;
+            border: none;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn.btn--blue {
+            background: #2a74fb;
+            display: inline-block;
+        }
+
+        .btn.btn--green {
+            background: #00bf81;
+        }
+
+        .description {
+            text-align: center;
+        }
+
+        .form--box {
+            background: #f9f9f9;
+            width: 500px;
+            padding: 1rem;
+            margin: 3rem auto;
+            border-radius: 10px;
+        }
+
+        #csv_options {
+            display: inline-block;
+        }
+
+        #csv_rewrite_engine {
+            float: left;
+        }
+
+        .form--headline {
+            font-size: 22px;
+        }
+
+        .alert {
+            padding: .5rem;
+            display: block;
+            border-radius: 5px;
+        }
+
+        .alert.alert--error {
+            border: 2px solid red;
+            color: red;
+        }
+
+        .alert.alert--success {
+            border: 2px solid green;
+            color: green;
+        }
+    </style>
+
+{% endblock %}
+
+{% block body %}
+
+    <h1>RewriteRule Generator</h1>
+
+    <p class="description">Upload a CSV File with your RewriteRules in the following format: <strong>/old-url;/new-html</strong><br></p>
+    <p class="description">If all went good, your download link will appear below the form</p>
+
+    <div class="form--box">
+
+        {% if error %}
+            <p class="alert alert--error">Error: {{ error }}</p>
+        {% endif %}
+
+        {% if success %}
+            <p class="alert alert--success">RewriteRule File successfully generated! Click the download link below</p>
+        {% endif %}
+
+        {{ form_start(form) }}
+            <p class="form--headline">Upload your CSV file here:</p>
+            {{ form_widget(form.csv_file) }}
+
+
+            <p class="form--headline">Additional options:</p>
+            {{ form_widget(form.options) }}
+            {{ form_widget(form.custom_status_code) }}
+            <label for="additional_flags">Additional flags (like QSA, L)</label>
+            {{ form_widget(form.additional_flags) }}
+            <br />
+            <label for="csv_rewrite_engine">Include RewriteEngine On</label>
+            {{ form_widget(form.rewrite_engine) }}
+
+            <button type="submit" class="btn btn--green">Generate</button>
+        {{ form_end(form) }}
+
+        {% if filename %}
+            <a class="btn btn--blue" href="{{ path('app_download', {'filename': filename}) }}">Download TXT</a>
+        {% endif %}
+    </div>
+
+{% endblock %}
