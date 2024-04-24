@@ -8,11 +8,10 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CsvType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('csv_file', FileType::class, ['label' => 'CSV File'])
@@ -29,12 +28,5 @@ class CsvType extends AbstractType
             ->add('additional_flags', TextType::class, ['label' => 'Additional flags (like L, QSA)', 'required' => false])
             ->add('rewrite_engine', CheckboxType::class, ['label' => 'Include Rewrite Engine', 'required' => false])
         ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-
-        ]);
     }
 }

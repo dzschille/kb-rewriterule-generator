@@ -12,22 +12,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    /**
-     * @Route("/", name="app_home")
-     *
-     * @param Request $request
-     * @param RewriteRuleGenerator $rewriteRuleGenerator
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    #[Route('/', name: "app_home")]
-    public function index(Request $request, RewriteRuleGenerator $rewriteRuleGenerator)
+    #[Route('/', name: "app_home", methods: ['GET', 'POST'])]
+    public function index(Request $request, RewriteRuleGenerator $rewriteRuleGenerator): Response
     {
         /**
          * initialize some variables
          */
         $form = $this->createForm(CsvType::class);
         $form->handleRequest($request);
+        $errorMessages = $this->getParameter('errors');
         $error = false;
         $filename = false;
         $success = false;
@@ -40,12 +33,12 @@ class IndexController extends AbstractController
          * export txt file
          */
         if ($form->isSubmitted() && $form->isValid()) {
-
+            $formOptions = $form->getData();
             /**
              * create new CSV instance from request
              * move CSV to tmp directory
              */
-            $csv = new Csv($request->files->get('csv')['csv_file']);
+            $csv = new Csv($formOptions['csv_file']);
 
             if ($csv->isValid()) {
 
@@ -57,11 +50,6 @@ class IndexController extends AbstractController
                  * set rewriteengine
                  */
                 $rewriteRuleGenerator->setRewriteRules($csv->getRewriteRules());
-
-                /**
-                 * check if any statuscode is set
-                 */
-                $formOptions = $request->request->get('csv');
 
                 if (isset($formOptions['options'])) {
 
@@ -102,11 +90,15 @@ class IndexController extends AbstractController
                  */
                 unset($form);
                 $form = $this->createForm(CsvType::class);
+
+            } else {
+                $error = $errorMessages['invalid_extension'];
             }
+
         }
 
         return $this->render('index/index.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'error' => $error,
             'filename' => $filename,
             'success' => $success
@@ -114,14 +106,8 @@ class IndexController extends AbstractController
 
     }
 
-    /**
-     * @Route("/download/{filename}", name="app_download")
-     *
-     * @param string $filename
-     *
-     * @return Response
-     */
-    public function download(string $filename)
+    #[Route('/download/{filename}', name: "app_download")]
+    public function download(string $filename): Response
     {
         $path = $this->getParameter('csv_upload_directory');
         $content = file_get_contents($path . '/' . $filename);
@@ -135,7 +121,7 @@ class IndexController extends AbstractController
         return $response;
     }
 
-    private function buildNewFileName()
+    private function buildNewFileName(): string
     {
         $fileNameFormat = $this->getParameter('file_name_options');
         $date = new \DateTime('now');

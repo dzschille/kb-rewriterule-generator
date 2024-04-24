@@ -4,6 +4,15 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    locale: 'en'
+    csv_tmp_directory: '%kernel.project_dir%/tmp'
+    csv_upload_directory: '%kernel.project_dir%/public/uploads'
+    file_name_options:
+        prefix: 'rewrites'
+        date_format: 'Y_m_d_H_i'
+        extension: 'txt'
+    errors:
+        invalid_extension: 'File is not a valid CSV file'
 
 services:
     # default configuration for services in *this* file
