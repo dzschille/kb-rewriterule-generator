@@ -94,7 +94,6 @@ class Csv
         return $this->_tmpDir . '/' . $this->_tmpFileName;
     }
 
-
     /**
      * @return RewriteRule[]
      */
@@ -110,30 +109,18 @@ class Csv
                  * pass it to rules array
                  */
                 for ($i = 0; $i < count($row); $i+=2) {
-                    $from = $this->validateUrl($row[0]);
-                    $to = $this->validateUrl($row[1]);
+                    $from = $row[0];
+                    $to = $row[1];
+                    $rule = new RewriteRule($from, $to);
 
-                    $this->_rewriterules[] = new RewriteRule($from, $to);
+                    if ($rule->isValid()) {
+                        $this->_rewriterules[] = $rule;
+                    }
                 }
             }
             fclose($fileObj);
         }
 
         return $this->_rewriterules;
-    }
-
-    /**
-     * removes invalid symbols from URL
-     *
-     * @param string $url
-     * @return string
-     */
-    private function validateUrl(string $url)
-    {
-        // FIXME: check validity, temp deactiveated
-        return $url;
-
-        $url = str_replace(' ', '', $url);
-        return preg_replace('/[(\(\)§\$%°\^\s\;\,"\\\'\{\}\[\]<>ß=\ã)]*/i', '', $url);
     }
 }

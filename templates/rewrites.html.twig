@@ -1,6 +1,15 @@
 {% if csv.rewrite_engine_on %}RewriteEngine On{% endif %}
 
 {% for rule in csv.rewrite_rules %}
-RewriteRule {{ rule.from }} {{ rule.to }} {% if csv.status_code %}[R={{ csv.status_code }}{% if csv.additional_flags %},{{ csv.additional_flags }}{% endif %}]{% endif %}
+    {% if rule.hasQueryString %}
 
+RewriteCond %{REQUEST_URI} ^{{ rule.from }}$
+RewriteCond %{QUERY_STRING} ^{{ rule.fromQuery }}$
+RewriteRule ^(.*)$ {{ rule.to }} {% if csv.status_code %}[R={{ csv.status_code }}{% if csv.additional_flags %},{{ csv.additional_flags }}{% endif %}]{% endif %}
+
+    {% else %}
+
+RewriteRule ^{{ rule.from }}$ {{ rule.to }} {% if csv.status_code %}[R={{ csv.status_code }}{% if csv.additional_flags %},{{ csv.additional_flags }}{% endif %}]{% endif %}
+
+    {% endif %}
 {% endfor %}
