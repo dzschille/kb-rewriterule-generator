@@ -5,7 +5,7 @@
 
 RewriteCond %{REQUEST_URI} ^{{ rule.from }}$
 RewriteCond %{QUERY_STRING} ^{{ rule.fromQuery }}$
-RewriteRule ^(.*)$ {{ rule.to }} {% if csv.status_code %}[R={{ csv.status_code }}{% if csv.additional_flags %},{{ csv.additional_flags }}{% endif %}]{% endif %}
+RewriteRule ^(.*)$ {{ rule.to }}? {% if csv.status_code %}[R={{ csv.status_code }}{% if csv.additional_flags %},{{ csv.additional_flags }}{% endif %}]{% endif %}
 
     {% else %}
 

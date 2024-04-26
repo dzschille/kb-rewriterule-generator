@@ -12,7 +12,7 @@ class RewriteRule
 
     private bool $hasQueryString = false;
 
-    private bool $isValid = false;
+    private ?bool $isValid = null;
 
     public function __construct(string $from, string $to)
     {
@@ -53,15 +53,25 @@ class RewriteRule
         $this->hasQueryString = $hasQueryString;
     }
 
-    public function isValid(): bool
+    public function isValid(): ?bool
     {
         return $this->isValid;
     }
 
     public function setIsValid(string $url): void
     {
+        // do not overwrite already set invalid state
+        if (false === $this->isValid()) {
+            return;
+        }
         $url = str_replace(['ä','ö','ü'], ['ae','oe','ue'], $url);
         $this->isValid = filter_var($url, FILTER_VALIDATE_URL);
+
+        if (false !== strpos($url, '??')) {
+            // TODO: workaround for my case with ?? and ??? in url paths
+            // @see http://www.faqs.org/rfcs/rfc2396.html -> "Reserved Characters"
+            $this->isValid = false;
+        }
     }
 
     public function getFromQuery(): string

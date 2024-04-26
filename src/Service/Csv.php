@@ -115,6 +115,8 @@ class Csv
 
                     if ($rule->isValid()) {
                         $this->_rewriterules[] = $rule;
+                    } else {
+                        $this->_invalidUrls++;
                     }
                 }
             }
@@ -122,5 +124,10 @@ class Csv
         }
 
         return $this->_rewriterules;
+    }
+
+    public function getInvalidUrls(): int
+    {
+        return $this->_invalidUrls;
     }
 }

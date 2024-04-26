@@ -85,6 +85,10 @@ class IndexController extends AbstractController
                 $csv->removeTmpFile();
                 $success = true;
 
+                if ($csv->getInvalidUrls() > 0) {
+                    $error = $csv->getInvalidUrls() . ' invalid urls were ignored.';
+                }
+
                 /**
                  * clear from after submission
                  */
